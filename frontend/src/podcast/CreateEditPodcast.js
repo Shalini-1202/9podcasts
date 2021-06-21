@@ -1,6 +1,8 @@
 import { LeftOutlined } from "@ant-design/icons";
-import { Form, Modal, Button, Input, Select, Checkbox, Radio} from "antd";
+import { Form, Modal, Button, Input, Select, Checkbox, Radio } from "antd";
 import React, { useState } from "react";
+
+import axios from "axios";
 
 const { Option } = Select;
 
@@ -14,18 +16,34 @@ const CreateEditPodcast = () => {
   const [aname, setName] = useState(null);
   const [email, setEmail] = useState(null);
   const [copyright, setCopyright] = useState(null);
-  const [category, setCategory] = useState("tc");
+  const [categoryId, setCategoryId] = useState("tc");
   const [radio, setRadio] = useState(1);
   const [pcategory, setpCategory] = useState("tc");
-  
 
   const showModal = () => {
     setIsModalVisible(true);
   };
 
   const handleOk = () => {
-    console.log(title, description, domain, lang, isExplicit, aname, email, copyright);
+    const payload = {
+      title: title,
+      description: description,
+      website_address: domain,
+      category_id: categoryId,
+      language: lang,
+      is_explict: isExplicit,
+      cover_art_id: 1,
+      author_name: aname,
+      author_email: email,
+      copyright: copyright,
+    };
+
+    console.log(payload);
     // http request to server
+    axios
+      .post("http://localhost:9999/podcasts", payload)
+      .then((res) => console.log(res));
+
     setIsModalVisible(false);
   };
 
@@ -44,11 +62,11 @@ const CreateEditPodcast = () => {
     console.log(values);
   };
 
-  const onChange = e => {
-    console.log('radio checked', e.target.value);
+  const onChange = (e) => {
+    console.log("radio checked", e.target.value);
     setRadio(e.target.value);
   };
-   return (
+  return (
     <>
       <Button type="primary" onClick={showModal}>
         Create a new podcast
@@ -129,7 +147,7 @@ const CreateEditPodcast = () => {
           </Form.Item>
           <Form.Item label="Copyright">
             <Input
-             // placeholder="Your name"
+              // placeholder="Your name"
               value={copyright}
               onChange={(e) => setCopyright(e.target.value)}
             />
@@ -140,35 +158,15 @@ const CreateEditPodcast = () => {
               <Form.Item name={"category"} noStyle>
                 <Select
                   placeholder="Category"
-                  value={category}
-                  onChange={(val) => setCategory(val)}
+                  value={categoryId}
+                  onChange={(val) => setCategoryId(val)}
                 >
-                  <Option value="tc">Tech</Option>
-                  <Option value="nc">Non-Tech</Option>
+                  <Option value={1}>Tech</Option>
+                  <Option value={2}>Non-Tech</Option>
                 </Select>
               </Form.Item>
             </Input.Group>
           </Form.Item>
-          <Form.Item label="Active Categories">
-          <Radio.Group onChange={onChange} value={radio} buttonStyle="solid">
-          <Radio value={1}>Tech</Radio>
-          <Radio value={2}>NonTech</Radio>
-          </Radio.Group>
-          </Form.Item>
-          <Form.Item label="Primary Category">
-            <Input.Group compact>
-              <Form.Item name={"pcategory"} noStyle>
-                <Select
-                  placeholder="Tech"
-                  value={pcategory}
-                  onChange={(val) => setpCategory(val)}
-                >
-                  <Option value="tc">Tech</Option>
-                  <Option value="nc">Non-Tech</Option>
-                </Select>
-              </Form.Item>
-            </Input.Group>
-            </Form.Item>
         </Form>
       </Modal>
     </>
