@@ -8,6 +8,7 @@ import (
 
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 var (
@@ -42,6 +43,7 @@ func main() {
 	}
 
 	api := echo.New()
+	api.Use(middleware.CORS())
 
 	api.GET("/", rootHandler)
 
